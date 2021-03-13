@@ -20,7 +20,7 @@ namespace AzureFunctionFix
                 databaseName:"IOT20",
                 collectionName: "Messages",
                 ConnectionStringSetting = "CosmosDbConnection",
-                SqlQuery = "SELECT * FROM c"
+                SqlQuery = "SELECT * FROM c "
             )]IEnumerable<dynamic> cosmos,
             ILogger log)
         {

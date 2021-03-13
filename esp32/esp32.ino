@@ -18,7 +18,11 @@ IOTHUB_CLIENT_LL_HANDLE deviceClient;
 char *ssid = "MORMOR";
 char *pass = "skansbergsvagen";
 char *conn= "HostName=iot20-JonathanKoitsalu.azure-devices.net;DeviceId=esp32;SharedAccessKey=ArpwI7AH3RW87FZiJV9x4VjhelUu2TxP/TytU6NhsN4=";
+
 bool messagePending = false;
+
+float latestTemperature = 0;
+float latestHumidity = 0;
 
 int interval = 1000;
 unsigned long prevMillis = 0;
@@ -45,18 +49,19 @@ void loop() {
       prevMillis = currentMillis;
 
       epochTime = time(NULL);                         //Ger epochTime med time-funktionen som initialiserades med initEpochTime.
-      Serial.printf("Current time: %lu - ", epochTime);
-
-      //skapa json-meddelandet:
-
       
+      //Serial.printf("Current time: %lu - ", epochTime);
 
+      //skapa json-meddelandet.
                 
       float temperature = dht.readTemperature();
       float humidity = dht.readHumidity();
+      
+      if(!std::isnan(temperature) && !std::isnan(humidity) && (abs(temperature-latestTemperature)>1 || abs(humidity-latestHumidity)>1)){ //kolla så att datat inte är nan samt att data hunnit ändra sig med en grad eller humidity.
 
-
-      if(!std::isnan(temperature) && !std::isnan(humidity)){ //kolla så att datat inte är nan.
+        latestTemperature = temperature;
+        latestHumidity = humidity;
+        
         char payload[256];
         
         StaticJsonBuffer<sizeof(payload)> buf;
